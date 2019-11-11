@@ -49,14 +49,12 @@ class _Login extends State<Login> {
       form.save(); // Guardar valores del formulario
       var peticion =
           '{"email":"' + _email + '", "password":"' + _contrasenia + '"}';
-      // var parsedJson = json.decode(peticion);
-      print("$_email y $_contrasenia");
-      print(peticion);
       final respuesta = await http.post(uri, body: peticion);
-      if (respuesta.contentLength == 56) {
+      final int codigo = respuesta.statusCode;
+      if (codigo == 400 || codigo == 404) {
         _mensajeAlerta(); // Usuario no encontrado
       }
-      if (respuesta.contentLength> 56) {
+      if (codigo == 200) {
         print("Registro encontrado"); //Usuario encontrado
 
         //Redirigir a la pagina principal
