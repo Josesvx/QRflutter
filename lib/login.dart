@@ -15,14 +15,6 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   final formkey = new GlobalKey<FormState>();
   String _email, _contrasenia;
-  static final postLogin = 'http://35.232.215.93/apis/login.php';
-
-//  void validacion() {
-//    final form = formkey.currentState;
-//    if (!form.validate()) {
-//      print('Formulario invalido');
-//    }
-//  }
 
 // Mensaje de Alerta
   void _mensajeAlerta() {
@@ -47,37 +39,26 @@ class _Login extends State<Login> {
         });
   }
   
- // usando la clase post que da el mismo error gay :v 
-  _validacion ()async{
-    final form = formkey.currentState;
-    if (!form.validate()) {
-      print('Formulario invalido'); //Validacion de formulario
-    } else {
-      String peticion = '{"email":"$_email", "pass":"$_contrasenia"}';
-      Map<String, dynamic> jsonMsj = jsonDecode(peticion);
-      await createPost(postLogin, body: jsonMsj);
-
-    }
-  }
-
-  // valiending metodo sin clase post pero da el mismo error que usando la clase post :v 
+// Metodo post  
   Future<dynamic> post() async {
     final form = formkey.currentState;
     if (!form.validate()) {
       print('Formulario invalido'); //Validacion de formulario
     } else {
-      final uri = 'http://35.232.215.93/apis/login.php'; //Post 
+      final uri = 'http://35.232.215.93/apis/login.php'; //Post
       form.save(); // Guardar valores del formulario
-      var peticion = '{"email": "$_email", "password": "$_contrasenia"}';
-      var parsedJson = json.decode(peticion);
-      print("$_email y  $_contrasenia");
-      final respuesta = await http.post(uri, body: parsedJson);
-      
-      if (respuesta.statusCode == 400) {    
+      var peticion =
+          '{"email":"' + _email + '", "password":"' + _contrasenia + '"}';
+      // var parsedJson = json.decode(peticion);
+      print("$_email y $_contrasenia");
+      print(peticion);
+      final respuesta = await http.post(uri, body: peticion);
+      if (respuesta.contentLength == 56) {
         _mensajeAlerta(); // Usuario no encontrado
       }
-      if (respuesta.statusCode == 200) {
+      if (respuesta.contentLength> 56) {
         print("Registro encontrado"); //Usuario encontrado
+
         //Redirigir a la pagina principal
       }
     }
@@ -129,8 +110,7 @@ class _Login extends State<Login> {
           minWidth: 200.0,
           height: 42.0,
           onPressed: () async{
-           _validacion();
-          // post(); 
+            post(); 
           }, 
           color: Colors.red[200],
           child: Text('Iniciar Sesion', style: TextStyle(color: Colors.white)),
